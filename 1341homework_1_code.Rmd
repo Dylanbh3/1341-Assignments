@@ -1,0 +1,100 @@
+---
+title: 'Homework 1'
+author: ''
+---
+
+Read in Problem 1 data
+```{r}
+getwd()
+library(tidyverse)
+```
+
+```{r}
+TB<- read.csv('/Users/dylansnelsire/Downloads/team_batting_data.csv')
+print(TB)
+```
+
+Problem 1a
+
+```{r}
+
+data1 <- TB[ , c(4:9)]
+plot(data1 , pch=20 , cex=.8 , col="red")
+r = round(cor(TB[4:9]),3)
+r
+```
+
+Problem 1c
+
+```{r}
+emptymodel <- lm(WPct ~ 1, data = data1)
+fullmodel <- lm(WPct ~ ., data = data1)
+finalmodel <- step(emptymodel, direction = 'both', scope = formula(fullmodel))
+summary(finalmodel)
+```
+
+Problem 1e
+
+```{r}
+plot(x = TB$RC,
+	y = TB$R,
+	xlab = "Runs scored Against ",
+	ylab = "Runs Created",
+	main = "Runs agaisnt vs Runs created")
+plot(x = TB$WPct,
+	y = TB$RC,
+	xlab = "Win Percentage",
+	ylab = "Runs Created",
+	main = "Win percentage vs RC")
+```
+
+Read in Problem 2 data
+
+```{r}
+#player_avg_babip.csv
+Avg_babip<- read.csv('/Users/dylansnelsire/Downloads/player_avg_babip.csv')
+Avg_babip
+
+
+```
+
+Problem 2a
+
+```{r}
+data <- Avg_babip[ , c(2:7)]
+plot(data , pch=20 , cex=.8 , col="#69b3a2")
+r2 = round(cor(data[1:6]),3)
+r2
+```
+
+Read in Problem 4 data
+
+```{r}
+TB2020<- read.csv('/Users/dylansnelsire/Downloads/2020_team_batting.csv')
+TB2020
+```
+
+Problem 4a
+
+```{r}
+data2 <- TB2020[ , c(2:7)]
+plot(data1 , pch=20 , cex=.8 , col="blue")
+r3 = round(cor(TB2020[2:7]),3)
+r3
+```
+
+Problem 4c
+```{r}
+library(tidyverse)
+```
+
+```{r}
+model <- lm(wRC_plus ~ WPct, data = TB2020)
+summary(model)
+
+ggplot(TB2020, aes(x = wRC_plus, y = WPct)) +
+  geom_point() +
+  stat_smooth(method = lm)
+
+
+```

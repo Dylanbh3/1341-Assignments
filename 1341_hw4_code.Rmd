@@ -1,0 +1,125 @@
+---
+title: "Homework 4"
+author: 'DyLan Snelsire'
+---
+
+Read in Problem 1 data
+
+```{r}
+Teams<- read.csv('/Users/dylansnelsire/Downloads/nba_team_stats.csv')
+Teams
+library(ggplot2)
+```
+
+Problem 1a
+
+```{r}
+ggplot(data = Teams, aes(x = ORtg, y = DRtg)) + geom_point(color = "red", size = 1) + xlab("Offensive Efficiency") + ylab("Defensive Efficiency")
+cor.test(Teams$ORtg,Teams$DRtg)
+
+```
+
+Problem 1b
+
+```{r}
+nrow(Teams)
+T <- -0.1577423 *(sqrt(nrow(Teams)-2))/sqrt(1-(0.1577423 ^2))
+T
+pt(T,119)
+```
+
+Problem 1d
+
+```{r}
+fit <- lm(WPct ~ eFG+ TOV + ORB + FTFGA + DRB + Opp.FTFGA + Opp.TOV + Opp.eFG
+ -1, data=Teams)
+summary(fit)
+```
+
+Problem 1e
+
+```{r}
+#Residuals
+resid <- residuals(fit, newdata = Teams)
+
+#Predicted values
+pvs <- predict(fit, newdata = Teams)
+ggplot(data = Teams, aes(x = pvs, y = WPct)) + geom_point(color = "red", size = 1) + xlab("expected win") + ylab("actual win")
+```
+
+Read in Problem 2 data
+
+```{r}
+SeasonComp<- read.csv('/Users/dylansnelsire/Downloads/nba_season_comparison.csv')
+SeasonComp
+```
+
+Problem 2a
+
+```{r}
+ggplot(data = SeasonComp, aes(x = eFG_2016, y = eFG_2017)) + geom_point(color = "red", size = 1) + xlab("eFG 16-17 ") + ylab("eFG 17-18")
+ggplot(data = SeasonComp, aes(x = TOV_2016, y = TOV_2017)) + geom_point(color = "red", size = 1) + xlab(" TOV 16-17 ") + ylab(" TOV 17-18")
+ggplot(data = SeasonComp, aes(x = ORB_2016, y = ORB_2017)) + geom_point(color = "red", size = 1) + xlab(" ORB 16-17 ") + ylab(" ORB 17-18")
+ggplot(data = SeasonComp, aes(x = FTFGA_2016, y = FTFGA_2017)) + geom_point(color = "red", size = 1) + xlab(" FTFGA 16-17 ") + ylab(" FTFGA 17-18")
+
+```
+
+Problem 2b
+
+```{r}
+ggplot(data = SeasonComp, aes(x = eFG_2016, y = eFG_2018)) + geom_point(color = "red", size = 1) + xlab("eFG 16-17 ") + ylab("eFG 18-19")
+ggplot(data = SeasonComp, aes(x = TOV_2016, y = TOV_2018)) + geom_point(color = "red", size = 1) + xlab(" TOV 16-17 ") + ylab(" TOV 18-19")
+ggplot(data = SeasonComp, aes(x = ORB_2016, y = ORB_2018)) + geom_point(color = "red", size = 1) + xlab(" ORB 16-17 ") + ylab(" ORB 18-19")
+ggplot(data = SeasonComp, aes(x = FTFGA_2016, y = FTFGA_2018)) + geom_point(color = "red", size = 1) + xlab(" FTFGA 16-17 ") + ylab(" FTFGA 18-19")
+```
+
+Problem 2c
+
+```{r}
+ggplot(data = SeasonComp, aes(x = eFG_2016, y = eFG_2019)) + geom_point(color = "red", size = 1) + xlab("eFG 16-17 ") + ylab("eFG 19-20")
+ggplot(data = SeasonComp, aes(x = TOV_2016, y = TOV_2019)) + geom_point(color = "red", size = 1) + xlab(" TOV 16-17 ") + ylab(" TOV 19-20")
+ggplot(data = SeasonComp, aes(x = ORB_2016, y = ORB_2019)) + geom_point(color = "red", size = 1) + xlab(" ORB 16-17 ") + ylab(" ORB 19-20")
+ggplot(data = SeasonComp, aes(x = FTFGA_2016, y = FTFGA_2019)) + geom_point(color = "red", size = 1) + xlab("FTFGA 16-17 ") + ylab("FTFGA 19-20")
+```
+
+Read in Problem 3 data
+
+```{r}
+ShotDist<- read.csv('/Users/dylansnelsire/Downloads/2020_21_shot_distributions.csv')
+ShotDist
+```
+
+Problem 3a
+
+```{r}
+ShotDist$exp_pts <- ShotDist$FGPct_0_3/ShotDist$FGA_0_3 + ShotDist$FGPct_3_10/ShotDist$FGA_3_10 + ShotDist$FGPct_10_16/ShotDist$FGA_10_16 + ShotDist$FGPct_16_3Pt/ShotDist$FGA_16_3Pt + ShotDist$FGPct_3Pt/ShotDist$FGA_3Pt 
+ShotDist
+hist(ShotDist$exp_pts, breaks=20)
+mean(ShotDist$exp_pts)
+sd(ShotDist$exp_pts)
+#summary.data.frame(ShotDist)
+```
+
+Problem 3b
+
+```{r}  
+hist(ShotDist$exp_pts[which(ShotDist$Pos == "C",)])
+
+hist(ShotDist$exp_pts[which(ShotDist$Pos == "PG",)])
+
+hist(ShotDist$exp_pts[which(ShotDist$Pos == "PF",)])
+
+hist(ShotDist$exp_pts[which(ShotDist$Pos == "SG",)])
+```
+Problem 3c
+
+```{r}
+model = aov(ShotDist$exp_pts ~ ShotDist$Pos, data = ShotDist )
+model
+```
+
+Problem 3d
+
+```{r}
+TukeyHSD(model)
+```

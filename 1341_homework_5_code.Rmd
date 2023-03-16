@@ -1,0 +1,125 @@
+---
+title: "Homework 5"
+author: 'ANSWER KEY'
+---
+
+Read in Problem 1 data
+```{r}
+library(cluster)
+```
+
+```{r}
+nfl<- read.csv('/Users/dylansnelsire/Downloads/nfl_team_stats.csv')
+nfl
+```
+
+Part 1a
+
+```{r, out.width="20%"}
+require(ggplot2)
+ggplot(nfl, aes(x = YPA_pass)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Yards per Passing Attempt", y = "Frequency")
+ggplot(nfl, aes(x = YPA_rush)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Yards per Rushing Attempt", y = "Frequency")
+ggplot(nfl, aes(x = comp_pct)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Completion Percentage", y = "Frequency")
+ggplot(nfl, aes(x = QBR)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Quarterback Rating", y = "Frequency")
+ggplot(nfl, aes(x = pass_att)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Passing Attempts per Game", y = "Frequency")
+ggplot(nfl, aes(x = rush_att)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Rushing Attempts per Game", y = "Frequency")
+ggplot(nfl, aes(x = pass_pct)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Pass Percentage", y = "Frequency")
+```
+
+Problem 1c
+
+```{r, out.width="20%"}
+require(ggplot2)
+ggplot(nfl, aes(x = punt_return_yds)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Punt Return Yards", y = "Frequency")
+ggplot(nfl, aes(x = kickoff_return_yds)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Kickoff Return Yards", y = "Frequency")
+ggplot(nfl, aes(x = FG_pct)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Field Goal Percentage", y = "Frequency")
+ggplot(nfl, aes(x = XP_pct)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Extra Point Percentage", y = "Frequency")
+ggplot(nfl, aes(x = yards_per_punt)) + geom_histogram(fill = "white", colour = "black", bins = 30) + facet_grid(decade ~ .) + labs(x = "Yards per Punt", y = "Frequency")
+```
+
+Problem 1e
+
+```{r}
+require(cluster)
+set.seed(21)
+c = kmeans(scale(nfl[6:17]), centers = 6, nstart = 100)
+c$cluster
+nfl$cluster <- c$cluster
+nfl
+
+```
+
+Problem 1f
+
+```{r}
+table(nfl$decade, nfl$cluster)
+```
+
+Problem 1h
+
+```{r}
+table(nfl$win_pct, nfl$cluster)
+```
+
+Problem 1i
+
+```{r, warning = FALSE}
+
+agg_mean = aggregate(nfl[,4:18],by=list(nfl$cluster),FUN=mean, na.rm=TRUE)
+agg_mean
+agg_sd = aggregate(nfl[,4:18],by=list(nfl$cluster),FUN=sd)
+agg_sd
+              
+```
+
+Problem 2a
+
+```{r}
+
+ep<- read.csv('/Users/dylansnelsire/Downloads/nfl_expected_points_2015.csv')
+ep
+fdp<- read.csv('/Users/dylansnelsire/Downloads/first_down_prob_2015.csv')
+fdp
+fg<- read.csv('/Users/dylansnelsire/Downloads/nfl_field_goals_2015.csv')
+fg
+attach(ep)
+ep1 <- subset(ep, count >= 25)
+detach(ep)
+ep1
+```
+
+Problem 2b
+
+```{r}
+fitep <- lm(pts ~ ytg+ factor(down), data=ep1)
+summary(fitep)
+fitep
+pvs <- predict(fitep, newdata = ep1)
+ep1$pvs <- predict(fitep, newdata = ep1)
+ep1
+```
+
+Problem 2d
+
+```{r}
+library(LaplacesDemon)
+
+#logit trnasformation of probability.
+x <- logit(fdp$prob)
+fitfdp <- lm(x ~factor(down) + ytg, data=fdp)
+fitfdp
+fitfdp <- lm(log(prob/(1-prob)) ~factor(down) + ytg, data=fdp)
+summary(fitfdp)
+pvs1 <- predict(fitfdp, newdata = fdp)
+prob <- invlogit(pvs1)
+fdp$pvs1 <- invlogit(pvs1)
+fdp
+
+
+```
+
+Problem 2e
+
+```{r}
+glm(good~dist, data = fg, family = 'binomial')
+```

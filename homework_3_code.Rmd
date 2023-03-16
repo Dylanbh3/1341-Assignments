@@ -1,0 +1,96 @@
+---
+title: "Homework 3"
+author: ''
+---
+
+Read in Problem 1 data
+
+```{r}
+BW19<- read.csv('/Users/dylansnelsire/Downloads/2019_batter_WAR.csv')
+BW19
+ 
+```
+
+Problem 1a
+
+```{r}
+library(ggplot2)
+ggplot(BW19, aes(x=Bat)) + geom_histogram(bins= 15, color="black", fill="red")
+ggplot(BW19, aes(x=BsR)) + geom_histogram(bins= 15, color="black", fill="blue")
+ggplot(BW19, aes(x=Fld)) + geom_histogram(bins= 15, color="black", fill="green")
+
+```
+
+Problem 1c
+
+```{r}
+data1 <- BW19[ , c(6:12)]
+plot(data1 , pch=20 , cex=.8 , col="red")
+r = round(cor(BW19[6:12]),3)
+r
+```
+
+Problem 1g
+
+```{r}
+fit <- lm(WAR ~ Bat + BsR + Fld + Pos + Lg + Rep, data=BW19)
+summary(fit)
+```
+
+Read in Problem 2 data
+
+```{r}
+PW19<- read.csv('/Users/dylansnelsire/Downloads/2019_pitcher_WAR.csv')
+
+PW19$starter_prop <- PW19$IP_starter / PW19$IP
+PWS <- split(PW19, f = PW19$starter_prop > 0.75)
+PWS
+
+```
+
+Problem 2a
+
+```{r}
+data2 <- PW19[ , c(5:8)]
+plot(data2 , pch=20 , cex=.8 , col="red")
+r2 = round(cor(BW19[5:8]),3)
+r2
+```
+
+Read in Problem 3 data
+
+```{r}
+WAR<- read.csv('/Users/dylansnelsire/Downloads/2018_2019_WAR.csv')
+WAR
+```
+
+Problem 3a
+
+```{r}
+WARF1 <- WAR[WAR$player_type == "batter", ]
+WARF1
+
+
+attach(WARF1)
+plot(WAR_2018, WAR_2019, main="2018 WAR VS 2019 WAR for batters",
+   xlab="2018 War ", ylab="2019 War ", pch=19)
+
+model = lm(WARF1$WAR_2019 ~ WARF1$WAR_2018)
+summary(model)
+```
+
+Problem 3b
+
+```{r}
+WARF <- WAR[WAR$player_type == "pitcher", ]
+WARF
+
+
+
+attach(WARF)
+plot(WAR_2018, WAR_2019, main="2018 WAR VS 2019 WAR for pitchers",
+   xlab="2018 War ", ylab="2019 War ", pch=19)
+model1 = lm(WARF$WAR_2019 ~ WARF$WAR_2018)
+summary(model1)
+
+```
