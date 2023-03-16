@@ -1,0 +1,65 @@
+---
+title: "1341 Final Project"
+author: "Dylan Snelsire"
+date: "2022-12-10"
+output: html_document
+---
+
+
+```{r}
+#read in current rushing stats for 2022 
+rstats<- read.csv('/Users/dylansnelsire/Downloads/FantasyPros_Fantasy_Football_Statistics_RB (1).csv')
+rstats
+adp<- read.csv('/Users/dylansnelsire/Downloads/FantasyPros_2022_RB_ADP_Rankings.csv')
+adpf = subset(adp, select = -c(6:10) )
+adpf
+```
+
+```{r}
+
+rstats$TotalTDS <- rstats$TD + rstats$TD.1
+rstats
+```
+
+
+
+```{r}
+Yard <- gsub(",", "", rstats$YDS)  
+Yards<- as.numeric(Yard)
+rstats$YDS <- Yards
+rstats
+rstats1 = subset(rstats, select = -c(18) )
+rstats1
+res <- cor(rstats1[3:18])
+round(res, 2)
+```
+
+
+```{r}
+attach(rstats1)
+plot(YDS, FPTS, main="Rushing Yards vs FPTS",
+   xlab="Rushing YDS ", ylab="Fantasy points ", pch=19)
+attach(rstats1)
+plot(YDS.1, FPTS, main=" Recieving Yards vs FPTS",
+   xlab="Recieving YDS ", ylab="Fantasy points ", pch=19)
+attach(rstats1)
+plot(TotalTDS, FPTS, main="TDS vs FPTS",
+   xlab="Total TDS", ylab="Fantasy points ", pch=19)
+plot(YDS, FPTS.G, main="Rushing Yards vs FPTS.G",
+   xlab="Rushing YDS ", ylab="Fantasy points ", pch=19)
+attach(rstats1)
+plot(YDS.1, FPTS.G, main=" Recieving Yards vs FPTS.G",
+   xlab="Recieving YDS ", ylab="Fantasy points ", pch=19)
+
+```
+
+```{r}
+library(tidyverse)
+rstats1 %>% arrange(desc(FPTS))
+rstats1 %>% arrange(desc(FPTS.G))
+rstats1 %>% arrange(desc(YDS))
+rstats1 %>% arrange(desc(YDS.1))
+rstats1 %>% arrange(desc(TotalTDS))
+
+
+```
